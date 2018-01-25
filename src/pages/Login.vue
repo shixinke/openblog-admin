@@ -6,7 +6,7 @@
       </div>
       <el-form :model="user" :rules="rules" ref="userForm" style="width:100%">
         <el-form-item prop="name">
-          <el-input v-model="user.name" placeholder="请输入用户名">
+          <el-input v-model="user.account" placeholder="请输入账号">
             <span slot="prefix">
                &nbsp;<i class="el-icon-blog-user"></i>
             </span>
@@ -75,6 +75,7 @@
 <script>
   import router from '../router'
   import {Message, Loading} from 'element-ui';
+  import http from '../utils/http'
 
   export default {
     data() {
@@ -82,20 +83,16 @@
         positionDate: [],
         positionItem: false,
         user: {
-          name: '',
-          password: '',
-          positionId: ''
+          account: '',
+          password: ''
         },
         rules: {
-          name: [
+          account: [
             {required: true, message: '请输入帐号', trigger: 'blur'},
           ],
           password: [
             {required: true, message: '请输入密码', trigger: 'blur'},
             {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
-          ],
-          positionId: [
-            {required: true, message: '请选择职位', trigger: 'blur'}
           ]
         }
       }
@@ -107,17 +104,19 @@
       initData() {
 
       },
-      registForm() {
-        this.positionItem = true
-      },
-      loginForm() {
-        this.positionItem = false
-      },
       login(formName) {
-
-      },
-      regist(formName) {
-
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            console.log(this.user)
+            http.post('/passport/checklogin', this.user).then(response => {
+              window.window.sessionStorage.setItem('uid', response.data.uid)
+              this.$message.success('登录成功')
+              router.push('/')
+            })
+          } else {
+            return false
+          }
+        });
       }
     }
   }

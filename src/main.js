@@ -22,6 +22,24 @@ Vue.component('iconfont', {
   // 同样也可以在 vm 实例中通过 this.message 来使用
   template: '<i :class="className"></i>'
 })
+
+router.beforeEach((to,from,next)=>{
+  console.log('全局路由控制');
+  if(!to.matched.some(route=>route.meta.withoutAuth)){
+    let uid = window.window.sessionStorage.uid;
+    if(uid){
+      next();
+    }else{
+      next({
+        path:'/login',
+        query:{redirect:to.fullPath}
+      })
+    }
+  }else{
+    next();
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

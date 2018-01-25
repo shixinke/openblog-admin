@@ -1,6 +1,6 @@
 # openblog-admin
 
-> openblog adminstrator system
+> A Vue.js project
 
 ## Build Setup
 

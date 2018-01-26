@@ -62,7 +62,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            store.clear();
+
             this.$message({
               type: 'success',
               message: '退出成功!'

@@ -237,6 +237,10 @@ a.table-column-btn:hover,a.text-success:hover, a.text-danger:hover{opacity:0.7;}
   border-radius: 16px
 }
 
+.el-avatar-border {
+  border:1px solid #ccc;
+}
+
 .el-avatar,.el-avatar>* {
   line-height: 32px
 }
@@ -258,6 +262,21 @@ a.table-column-btn:hover,a.text-success:hover, a.text-danger:hover{opacity:0.7;}
 
 .el-avatar-large.el-avatar-icon {
   font-size: 24px
+}
+
+.el-avatar-mlarge {
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 40px
+}
+
+.el-avatar-mlarge>* {
+  line-height: 50px
+}
+
+.el-avatar-mlarge.el-avatar-icon {
+  font-size: 48px
 }
 
 .el-avatar-small {
@@ -282,6 +301,30 @@ a.table-column-btn:hover,a.text-success:hover, a.text-danger:hover{opacity:0.7;}
 .el-avatar>img {
   width: 100%;
   height: 100%
+}
+
+.profile-avatar {
+  cursor:pointer;
+  position:relative;
+}
+
+.avatar-mask{
+  position:absolute;
+  height:100%;
+  width:100%;
+  font-size:12px;
+  z-index:666;
+  background:#000;
+  opacity:0.7;
+  display:none;
+}
+
+.profile-avatar:hover .avatar-mask{
+  display:block;
+}
+
+.el-avatar-mlarge .avatar-mask{
+  line-height:80px;
 }
 
 /* info card */

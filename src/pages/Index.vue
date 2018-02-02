@@ -32,25 +32,25 @@
                       </el-row>
                       <el-row class="margin-top-8">
                         <el-col :span="8"><p class="notwrap">服务器版本 :</p></el-col>
-                        <el-col :span="16" class="padding-left-8">北京</el-col>
+                        <el-col :span="16" class="padding-left-8">{{statsData.sys.serverVersion}}</el-col>
                       </el-row>
                       <el-row class="margin-top-8">
                         <el-col :span="8"><p class="notwrap">框架版本:</p></el-col>
-                        <el-col :span="16" class="padding-left-8">北京</el-col>
+                        <el-col :span="16" class="padding-left-8">{{statsData.sys.version}}</el-col>
                       </el-row>
                       <el-row class="margin-top-8">
                         <el-col :span="8"><p class="notwrap">系统运行时间:</p></el-col>
-                        <el-col :span="16" class="padding-left-8">北京</el-col>
+                        <el-col :span="16" class="padding-left-8">{{statsData.sys.uptime}}</el-col>
                       </el-row>
                       <el-row class="margin-top-8">
                         <el-col :span="8"><p class="notwrap">共享字典容量:</p></el-col>
                         <el-col :span="16" class="padding-left-8">
-                          100 M
+                          {{formatDictCapacity}}
                         </el-col>
                       </el-row>
                       <el-row class="margin-top-8">
                         <el-col :span="8"><p class="notwrap">共享字典空闲空间:</p></el-col>
-                        <el-col :span="16" class="padding-left-8"><el-progress :percentage="70" ></el-progress></el-col>
+                        <el-col :span="16" class="padding-left-8"><el-progress :percentage="statsData.sys.dictFreeRate" ></el-progress></el-col>
                       </el-row>
                     </div>
                   </el-card>
@@ -73,7 +73,7 @@
                         <el-row type="flex" align="middle" justify="center" class="height-100">
                           <div>
                             <p style="text-align: center; color: rgb(45, 140, 240); font-size: 30px; font-weight: 700;">
-                              <span>100</span><span></span></p>
+                              <span>{{statsData.total.posts}}</span><span></span></p>
                             <p class="info-intro-text" slot="intro"> 总文章数 </p>
                           </div>
                         </el-row>
@@ -95,7 +95,7 @@
                         <el-row type="flex" align="middle" justify="center" class="height-100">
                           <div>
                             <p style="text-align: center; color: rgb(100, 213, 114); font-size: 30px; font-weight: 700;">
-                              <span>100</span><span></span></p>
+                              <span>{{statsData.total.tags}}</span><span></span></p>
                             <p class="info-intro-text" slot="intro"> 总标签数 </p>
                           </div>
                         </el-row>
@@ -117,7 +117,7 @@
                         <el-row type="flex" align="middle" justify="center" class="height-100">
                           <div>
                             <p style="text-align: center; color: rgb(255, 213, 114); font-size: 30px; font-weight: 700;">
-                              100
+                              {{statsData.total.views}}
                             </p>
                             <p class="info-intro-text" slot="intro"> 浏览总数 </p>
                           </div>
@@ -140,7 +140,7 @@
                         <el-row type="flex" align="middle" justify="center" class="height-100">
                           <div>
                             <p style="text-align: center; color: rgb(242, 94, 67); font-size: 30px; font-weight: 700;">
-                              <span>100</span><span></span></p>
+                              <span>{{statsData.total.comments}}</span><span></span></p>
                             <p class="info-intro-text" slot="intro"> 评论总数 </p>
                           </div>
                         </el-row>
@@ -153,20 +153,19 @@
                 <el-card class="box-card">
                   <div slot="header" class="clearfix">
                     <span>系统信息</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
                   </div>
                   <div  class="text item">
                     <el-row>
                       <el-col :span="8" align="middle">
-                        <el-progress type="circle" :percentage="25"></el-progress>
+                        <el-progress type="circle" :percentage="statsData.sys.memoryUsedRate"></el-progress>
                         <el-row >内存使用情况</el-row>
                       </el-col>
                       <el-col :span="8" align="middle">
-                        <el-progress type="circle" :percentage="25"></el-progress>
+                        <el-progress type="circle" :percentage="statsData.sys.sysDiskUsedRate"></el-progress>
                         <el-row >系统盘使用情况</el-row>
                       </el-col>
                       <el-col :span="8" align="middle">
-                        <el-progress type="circle" :percentage="25"></el-progress>
+                        <el-progress type="circle" :percentage="statsData.sys.dataDiskUsedRate"></el-progress>
                         <el-row >数据盘使用情况</el-row>
                       </el-col>
                     </el-row>
@@ -242,10 +241,33 @@
   import topHeader from '../components/header.vue'
   import leftMenu from '../components/menu.vue'
   import router from '../router'
+  import http from '../utils/http'
+  import formatter from '../utils/formatter'
 
   export default {
     data() {
       return {
+        statsData : {
+          userInfo:{},
+          sys:{
+            serverVersion:'',
+            version:'',
+            uptime:'',
+            workCount:0,
+            dictFreeSpace:0,
+            dictCapacity:0,
+            dictFreeRate:0,
+            memoryUsedRate:0,
+            sysDiskUsedRate:0,
+            dataDiskUsedRate:0
+          },
+          total:{
+            posts:0,
+            tags:0,
+            comments:0,
+            views:0
+          }
+        },
         dict_free_space : 100,
         topicData:{},
         topicSettings:{},
@@ -263,6 +285,11 @@
     },
     mounted() {
       this.initData()
+    },
+    computed:{
+      formatDictCapacity:function() {
+        return formatter.byteFormat(this.statsData.sys.dictCapacity)
+      }
     },
     created: function () {
       this.topicData = {
@@ -334,7 +361,24 @@
     },
     methods: {
       initData() {
-
+        http.post('/dashboard/stats', this.user).then(response => {
+          let response_data = response.data
+          this.statsData = response_data;
+          this.statsData.sys.dictFreeRate = this.rateFormat(response_data.sys.dictFreeSpace, response_data.sys.dictCapacity)
+          this.statsData.sys.memoryUsedRate = this.rateFormat(response_data.sys.memory.used, response_data.sys.memory.total)
+          this.statsData.sys.sysDiskUsedRate = this.rateToNumber(response_data.sys.sysDisk.rate)
+          this.statsData.sys.dataDiskUsedRate = this.rateToNumber(response_data.sys.dataDisk.rate)
+        })
+      },
+      rateFormat(num, total) {
+        return parseFloat(((num / total) * 100).toFixed(2))
+      },
+      rateToNumber(rate) {
+        let pos = rate.lastIndexOf('%')
+        if (pos > 0) {
+          return parseFloat(rate.substring(0, pos))
+        }
+        return parseFloat(rate)
       }
     }
   }

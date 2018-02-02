@@ -80,8 +80,6 @@
   export default {
     data() {
       return {
-        positionDate: [],
-        positionItem: false,
         user: {
           account: '',
           password: ''

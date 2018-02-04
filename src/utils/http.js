@@ -4,10 +4,11 @@ import {Message, Loading} from 'element-ui';
 import qs from 'qs'
 
 const BASE_URL = process.env.API_BASE_URL || 'http://localhost:7000/admin'
+const UPLOAD_PREVIEW_URL = process.env.UPLOAD_PREVIEW_URL || 'http://localhost:7000'
 
 // axios 配置
 axios.defaults.timeout = 1000000
-
+axios.defaults.withCredentials = true
 // 添加请求拦截器
 let loadingWin;
 axios.interceptors.request.use(function (request) {
@@ -68,6 +69,8 @@ function handleSuccess(resolve, response) {
 }
 
 const http = {
+  apiBaseUrl : BASE_URL,
+  uploadPreviewUrl: UPLOAD_PREVIEW_URL,
   // 错误全局提示
   get(url, params) {
     return new Promise((resolve, reject) => {

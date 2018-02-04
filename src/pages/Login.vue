@@ -74,8 +74,8 @@
 </style>
 <script>
   import router from '../router'
-  import {Message, Loading} from 'element-ui';
   import http from '../utils/http'
+  import userStore from '../store/user'
 
   export default {
     data() {
@@ -107,7 +107,8 @@
           if (valid) {
             console.log(this.user)
             http.post('/passport/checklogin', this.user).then(response => {
-              window.window.sessionStorage.setItem('uid', response.data.uid)
+              console.log(response.data)
+              userStore.set(response.data)
               this.$message.success('登录成功')
               router.push('/')
             })

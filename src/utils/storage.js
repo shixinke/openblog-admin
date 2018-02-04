@@ -1,9 +1,14 @@
-const store = {
+const storage = {
   set(key, value, persist){
+    value = JSON.stringify(value)
     return this.obj(persist).setItem(key, value)
   },
   get(key, persist){
-    return this.obj(persist).getItem(key)
+    let value = this.obj(persist).getItem(key)
+    if (value) {
+      return JSON.parse(value)
+    }
+    return value
   },
   remove(key, persist){
     return this.obj(persist).removeItem(key)
@@ -22,4 +27,4 @@ const store = {
     }
   }
 }
-export default store
+export default storage

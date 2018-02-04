@@ -8,6 +8,7 @@ import VCharts from 'v-charts'
 import 'element-ui/lib/theme-chalk/index.css'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import userStore from './store/user'
 
 Vue.config.productionTip = false
 
@@ -25,8 +26,9 @@ Vue.component('iconfont', {
 
 router.beforeEach((to,from,next)=>{
   console.log('全局路由控制');
+  console.log(process.env)
   if(!to.matched.some(route=>route.meta.withoutAuth)){
-    let uid = window.window.sessionStorage.uid;
+    let uid = userStore.get('uid')
     if(uid){
       next();
     }else{

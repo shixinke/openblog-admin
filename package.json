@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "element-tree-grid": "^0.0.15",
     "element-ui": "^2.0.11",
     "mavon-editor": "^2.4.16",
     "tiny-cookie": "^2.1.1",

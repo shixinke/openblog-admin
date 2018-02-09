@@ -17,7 +17,7 @@
 
                         </el-col>
                         <el-col class="card-title" :span="16">
-                          诗心客
+                          {{pageData.user.nickname}}
                         </el-col>
                       </el-row>
                     </div>
@@ -213,7 +213,7 @@
 
               </div>
               <div class="text item">
-                <ve-line :data="lineData" :settings="lineSettings"></ve-line>
+                <ve-line :data="connectionData" :settings="connectionSettings"></ve-line>
               </div>
             </el-card>
           </el-row>
@@ -274,15 +274,17 @@
             views:0
           }
         },
-        dict_free_space : 100,
         topicData:{},
         topicSettings:{},
         tagData:{},
         tagSettings:{},
         categoryData:{},
         categorySettings:{},
-        lineData:{},
-        lineSettings:{}
+        connectionData:{
+          columns: ['时间', '连接数', '等待连接数'],
+          rows: []
+        },
+        connectionSettings:{}
       }
     },
     components: {
@@ -351,19 +353,7 @@
         hoverAnimation: false,
         radius: 100,
         offsetY: 200
-      },
-        this.lineData = {
-          columns: ['日期', '连接数', '请求数', '占比', '其他'],
-          rows: [
-            { '日期': '1月1日', '连接数': 1523, '请求数': 1523, '占比': 0.12, '其他': 100 },
-            { '日期': '1月2日', '连接数': 1223, '请求数': 1523, '占比': 0.345, '其他': 100 },
-            { '日期': '1月3日', '连接数': 2123, '请求数': 1523, '占比': 0.7, '其他': 100 },
-            { '日期': '1月4日', '连接数': 4123, '请求数': 1523, '占比': 0.31, '其他': 100 },
-            { '日期': '1月5日', '连接数': 3123, '请求数': 1523, '占比': 0.12, '其他': 100 },
-            { '日期': '1月6日', '连接数': 7123, '请求数': 1523, '占比': 0.65, '其他': 100 }
-          ]
-        }
-      this.lineSettings = {}
+      }
     },
     methods: {
       initData() {
@@ -376,6 +366,25 @@
           this.pageData.sys.sysDiskUsedRate = this.rateToNumber(response_data.sys.sysDisk.rate)
           this.pageData.sys.dataDiskUsedRate = this.rateToNumber(response_data.sys.dataDisk.rate)
         })
+        this.getConnections();
+      },
+      getConnections() {
+        var _self = this
+        this.getConnection()
+        setInterval(function(){
+          _self.getConnection()
+        }, 30000);
+      },
+      getConnection(){
+        var _self = this
+        http.get('/dashboard/connections').then(response => {
+          if (_self.connectionData.rows.length >= 24) {
+            _self.connectionData.rows.unshift()
+          }
+          let row = {"时间":response.data.datetime, "连接数":response.data.connectionsActive, '等待连接数':response.data.connectionsWaiting}
+          _self.connectionData.rows.push(row)
+
+        });
       },
       rateFormat(num, total) {
         return parseFloat(((num / total) * 100).toFixed(2))

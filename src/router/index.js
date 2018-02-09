@@ -14,6 +14,8 @@ import TagList from '@/pages/tag/Index'
 import MemberList from '@/pages/member/Index'
 import RoleList from '@/pages/role/Index'
 
+import CategoryList from '@/pages/category/Index'
+
 Vue.use(Router)
 
 export default new Router({
@@ -67,6 +69,14 @@ export default new Router({
       component: RoleList,
       meta : {
         title: '角色列表'
+      }
+    },
+    {
+      path: '/category/index',
+      name: 'CategoryList',
+      component: CategoryList,
+      meta : {
+        title: '分类列表'
       }
     }
   ]
